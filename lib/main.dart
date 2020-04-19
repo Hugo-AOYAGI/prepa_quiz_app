@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import 'fontStyles.dart';
 import 'components.dart';
 import 'sizeControllers.dart';
@@ -18,6 +17,7 @@ import 'categoryMenu.dart';
 import 'quizMenu.dart';
 import 'splashScreen.dart';
 import 'finishedQuizMenu.dart';
+import 'sheetMenu.dart';
 
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
@@ -38,6 +38,7 @@ BuildContext mainContext;
 dynamic categories;
 dynamic subjects;
 dynamic selectedCategories;
+dynamic sheets;
 ValueNotifier<List<int>> selectedLen = ValueNotifier([0, 0]);
 
 void loadData() async {
@@ -57,6 +58,11 @@ void loadData() async {
       selectedLen.value[1]++;
     }
   }
+  print("Loading Sheets...");
+  final sheetsResponse = await http.get("https://quiz-app-db-sheets.glitch.me/sheets");
+  sheets = json.decode(sheetsResponse.body);
+
+  print("Data loaded...");
   splashScreenKey.currentState.loadMenu();
 }
 
@@ -119,7 +125,7 @@ class _MainListViewState extends State<MainListView> {
   final _activeColor = Colors.white;
   final _unselectedColor = Colors.lightBlue[100];
 
-  final _bottomIcons = [Icons.queue, Icons.home]; // Icons.settings];
+  final _bottomIcons = [Icons.queue, Icons.home, Icons.view_column];
 
   int _pageIndex = 1;
 
@@ -136,7 +142,7 @@ class _MainListViewState extends State<MainListView> {
             children: <Widget>[
               QuizStartPage(),
               HomePage(),
-              // SettingsPage()
+              SheetsPage()
             ]
         ),
         Positioned(
@@ -431,23 +437,43 @@ class StatsPageBox extends StatelessWidget {
 
 
 
-class SettingsPage extends StatelessWidget {
+class SheetsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PageTemplate(
       child: Column(
         children: <Widget>[
           TitleAndSubtitle(
-            title: "Settings",
+            title: "Fiches",
             subtitle: "",
             titleAlignment: Alignment.topCenter,
             subtitleAlignment: Alignment.topCenter,
             padding: [0, 0, 20, 0]
           ),
-          SizedBox(height: windowRelHeight(0.02)),
-          UpdateButton(),
-          SizedBox(height: windowRelHeight(0.055)),
-
+          SizedBox(height: windowRelHeight(0.01)),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.grey[400], width: 1), bottom: BorderSide(color: Colors.grey[200], width: 1))
+            ),
+            height: windowRelHeight(0.7),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                      padding: EdgeInsets.all(10),
+                      children: sheets.entries.map<Widget>((sheet) {
+                        return Column(
+                          children: [
+                            SheetButton(title: sheet.key, url: sheet.value),
+                            SizedBox(height: windowRelHeight(0.015))
+                          ],
+                        );
+                      }).toList()
+                  ),
+                )
+              ],
+            )
+          )
         ],
       )
       ,
@@ -455,6 +481,45 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
+class SheetButton extends StatelessWidget {
+
+  final title;
+  final url;
+
+  SheetButton({@required this.title, @required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: () {
+        Navigator.of(context).push(slideTransitionBuilder(
+            menu: SheetMenu(url: url),
+            begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0)
+        ));
+      },
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.blue[100], Colors.grey[100]],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          height: windowRelHeight(0.115),
+          child: Center(
+              child: Text(
+                title,
+                style: mediumTitleFont2,
+                textAlign: TextAlign.center,
+              )
+          )
+      ),
+    );
+  }
+
+}
 
 class UpdateButton extends StatelessWidget {
   final size = 0.15;

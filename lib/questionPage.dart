@@ -221,16 +221,9 @@ class _QuestionPageState extends State<QuestionPage> {
                             padding: EdgeInsets.all(10),
                             child: ConfirmQuestionButton(command: () {
                               learntQuestion.value = false;
-                              if (nextQuestion.questionPath == widget.question.questionPath) {
-                                  Navigator.push(mainContext, scaleTransitionBuilder(
-                                      menu: FinishedQuizMenu(),
-                                      duration: 300)
-                                  );
-                              } else {
-                                currPage.value = nextQuestion.getCard();
-                                getNewQuestionPage();
-                                incrementQuestionIndex();
-                              }
+                              currPage.value = nextQuestion.getCard();
+                              getNewQuestionPage();
+                              incrementQuestionIndex();
                             }, icon: Icons.arrow_forward, tag: "1")
                         )
                     )
