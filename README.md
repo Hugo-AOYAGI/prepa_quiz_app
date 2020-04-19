@@ -8,7 +8,7 @@ In order to download this application, please install flutter and this repo on y
 
 ## Examples
 
-![Create Quiz Menu](https://raw.githubusercontent.com/Hugo-AOYAGI/flutter_quiz_app/master/readme_images/create_menu.png)
-![Categories Menu](https://raw.githubusercontent.com/Hugo-AOYAGI/flutter_quiz_app/master/readme_images/cat_menu.png)
-![Question Example](https://raw.githubusercontent.com/Hugo-AOYAGI/flutter_quiz_app/master/readme_images/quest_ex.png)
-![Answer Example](https://raw.githubusercontent.com/Hugo-AOYAGI/flutter_quiz_app/master/readme_images/ans_ex.png)
+![Create Quiz Menu](https://raw.githubusercontent.com/Hugo-AOYAGI/prepa_quiz_app/master/readme_images/create_menu.png)
+![Categories Menu](https://raw.githubusercontent.com/Hugo-AOYAGI/prepa_quiz_app/master/readme_images/cat_menu.png)
+![Question Example](https://raw.githubusercontent.com/Hugo-AOYAGI/prepa_quiz_app/master/readme_images/quest_ex.png)
+![Answer Example](https://raw.githubusercontent.com/Hugo-AOYAGI/prepa_quiz_app/master/readme_images/ans_ex.png)
