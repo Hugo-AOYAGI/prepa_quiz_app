@@ -74,10 +74,16 @@ class _QuestionPageState extends State<QuestionPage> {
               ),
               SizedBox(height: windowRelHeight(0.025),),
               Text("Question", style: mediumTitleFont2),
-              Container(
-                child: Image.network(widget.question.getQuestionPath()),
-                padding: EdgeInsets.all(26),
+              SingleChildScrollView(
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: windowRelHeight(0.4),
+                  ),
+                  child: Image.network(widget.question.getQuestionPath()),
+                  padding: EdgeInsets.all(26),
+                ),
               ),
+
               SizedBox(height: windowRelHeight(0.025),),
               widget.question.type != "CRD"? Text("Réponses", style: mediumTitleFont2) :
               Text("Tournez la carte pour la réponse", style: lightTextFontGrey),
@@ -100,7 +106,7 @@ class _QuestionPageState extends State<QuestionPage> {
                         ),
                       ),
                     ),
-                    SizedBox(width: windowRelWidth(0.275),),
+                    SizedBox(width: windowRelWidth(0.245),),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
