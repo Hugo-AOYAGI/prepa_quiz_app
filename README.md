@@ -4,7 +4,14 @@ This repo is the front end code of a Quiz application I build on flutter in orde
 
 ## Download
 
-In order to download this application, please install flutter and this repo on your own computer, you then need to execute the command ```flutter run --release``` in your command prompt.
+First you will need to install [flutter](https://flutter.dev/docs/get-started/install).
+NB: Updating your environment variables is not necessary.
+You'll then need to install [Android Studio](https://developer.android.com/studio). 
+Please follow the tutorial on the flutter install, you will need to enable sdk tools on android studio and all of it is explained.
+
+Once this is done, download this repository and unzip it. Then you just have to open the flutter console located in the flutter folder.
+
+You then need to navigate to the folder of the repository with ```cd Path/To/Folder``` execute the command ```flutter run --release``` in your command prompt.
 
 ## Examples
 

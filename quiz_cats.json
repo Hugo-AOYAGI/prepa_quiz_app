@@ -1,0 +1,201 @@
+{
+    "subjects": [
+        [
+            "Mathématiques",
+            "MAT"
+        ],
+        [
+            "Physique-Chimie",
+            "PHY"
+        ],
+        [
+            "Sciences de l'ingénieur",
+            "SII"
+        ],
+        [
+            "Espagnol",
+            "ESP"
+        ],
+        [
+            "Francais",
+            "FRA"
+        ]
+    ],
+    "categories": {
+        "MAT": [
+            [
+                "Logique & Raisonnement",
+                "00"
+            ],
+            [
+                "Nombres complexes",
+                "01"
+            ],
+            [
+                "Fonctions réelles",
+                "02"
+            ],
+            [
+                "Calcul algébrique",
+                "03"
+            ],
+            [
+                "Primitives & Intégration",
+                "04"
+            ],
+            [
+                "Equations différentielles",
+                "05"
+            ],
+            [
+                "Ensembles & Applications",
+                "06"
+            ],
+            [
+                "Systèmes & Matrices",
+                "07"
+            ],
+            [
+                "Géométrie plane & dans l'espace",
+                "08"
+            ],
+            [
+                "Polynômes",
+                "09"
+            ],
+            [
+                "Espaces vectoriels",
+                "10"
+            ],
+            [
+                "Développements limités",
+                "11"
+            ]
+
+        ],
+        "PHY": [
+            [
+                "Circuits électriques",
+                "00"
+            ],
+            [
+                "Propagation du signal",
+                "01"
+            ],
+            [
+                "Oscillateurs amortis",
+                "02"
+            ],
+            [
+                "Filtrage linéaire",
+                "03"
+            ],
+            [
+                "Optique géométrique",
+                "04"
+            ],
+            [
+                "Cinématique & Dynamique",
+                "05"
+            ],
+            [
+                "Approche énergétique du mouvement",
+                "06"
+            ],
+            [
+                "TMC et Mouvement à force centrale",
+                "07"
+            ],
+            [
+                "Description d'un système chimique",
+                "08"
+            ],
+            [
+                "Cinétique chimique",
+                "09"
+            ],
+            [
+                "Structure de la matière",
+                "10"
+            ],
+            [
+                "Intéractions moléculaires",
+                "11"
+            ],
+            [
+                "Réactions acido-basiques",
+                "12"
+            ],
+            [
+                "Précipitation & Dissolution",
+                "13"
+            ],
+            [
+                "Oxydo-réduction",
+                "14"
+            ],
+            [
+                "Cristallographie",
+                "15"
+            ]
+        ],
+        "SII": [
+            [
+                "Ingénierie système",
+                "00"
+            ],
+            [
+                "Electronique de puissance",
+                "01"
+            ],
+            [
+                "Réponses temporelles des SLCI",
+                "02"
+            ],
+            [
+                "Analyse harmonique des SLCI",
+                "03"
+            ],
+            [
+                "Cinématique",
+                "04"
+            ],
+            [
+                "Actions mécaniques & Statique",
+                "05"
+            ],
+            [
+                "Conception et Fabrication",
+                "06"
+            ]
+        ],
+        "ESP": [
+            [
+                "Conjugaison",
+                "00"
+            ],
+            [
+                "Vocabulaire",
+                "01"
+            ],
+            [
+                "Culture et Société",
+                "02"
+            ]
+        ],
+        "FRA": [
+            [
+                "Le complot contre l'amérique",
+                "00"
+            ],
+            [
+                "La démocratie en Amérique",
+                "01"
+            ],
+            [
+                "Pièces de Aristophane",
+                "02"
+            ]
+        ]
+    }
+}
