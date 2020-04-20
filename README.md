@@ -11,6 +11,8 @@ Please follow the tutorial on the flutter install, you will need to enable sdk t
 
 Once this is done, download this repository and unzip it. Then you just have to open the flutter console located in the flutter folder.
 
+In this console, run the ```flutter doctor``` command to check if everything is in order. Run ```flutter doctor --android-licenses``` to accept the android licenses if they are not. 
+
 You then need to navigate to the folder of the repository with ```cd Path/To/Folder``` execute the command ```flutter run --release``` in your command prompt.
 
 ## Examples
