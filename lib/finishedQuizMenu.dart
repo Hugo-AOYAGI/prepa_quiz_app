@@ -1,16 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'fontStyles.dart';
 import 'components.dart';
 import 'sizeControllers.dart';
 import 'main.dart';
-
-import 'quizMenu.dart';
-import 'questionPage.dart';
 
 
 class FinishedQuizMenu extends StatelessWidget {

@@ -8,9 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'fontStyles.dart';
 import 'sizeControllers.dart';
 import 'quizMenu.dart';
-import 'main.dart';
-import 'components.dart';
-import 'finishedQuizMenu.dart';
+
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -391,11 +389,11 @@ class UpperQuestionInfoBar extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          SizedBox(width: 20,),
-          //Icon(Icons., color: Colors.blue[500], size: 22),
-          //SizedBox(width: 20,),
+          SizedBox(width: 10,),
+          Image(image: AssetImage("assets/subjects/" + subjCode + ".png"), width: 30, height: 30),
+          SizedBox(width: 10,),
           Container(
-            width: windowRelWidth(0.85),
+            width: windowRelWidth(0.73),
             child: Text(subjCode + " : " + category[0], style: mediumTitleFont, overflow: TextOverflow.fade, maxLines: 1, softWrap: false,)
           )
 
