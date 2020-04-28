@@ -86,7 +86,7 @@ class CategoriesListView extends StatelessWidget {
         child: ListView.builder(
           itemCount: subjects.length + 1,
           itemBuilder: (context, index) {
-            if (index % 6 == 0) {
+            if (index % 7 == 0) {
               return YearTitle(title: index == 0 ? "PTSI" : "PT");
             }
             List subject = subjects[(index % (subjects.length+1)) - 1];

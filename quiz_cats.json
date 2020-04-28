@@ -70,6 +70,10 @@
             [
                 "Développements limités",
                 "11"
+            ],
+            [
+                "Probabilités",
+                "12"
             ]
 
         ],
@@ -199,6 +203,16 @@
             [
                 "Pièces de Aristophane",
                 "02"
+            ]
+        ],
+        "ANG": [
+            [
+                "Culture générale",
+                "00"
+            ],
+            [
+                "Vocabulaire",
+                "01"
             ]
         ]
     }
