@@ -96,21 +96,24 @@ class MainMenu extends StatelessWidget {
 
     mainContext = context;
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0, 1.8],
-            colors: <Color> [
-              Colors.purple[800],
-              Color(0xFF00C8D9),
-            ]
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          body: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0, 1.8],
+                      colors: <Color> [
+                        Colors.purple[800],
+                        Color(0xFF00C8D9),
+                      ]
+                  )
+              ),
+              child: MainListView()
           )
-        ),
-        child: MainListView()
-      )
+      ),
     );
   }
 }
@@ -435,11 +438,40 @@ class StatsPageBox extends StatelessWidget {
   }
 }
 
+Widget sheetsListView;
+List<dynamic> treePath = [];
 
+class SheetsPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _SheetsPageState();
+  }
+}
 
-class SheetsPage extends StatelessWidget {
+class _SheetsPageState extends State<SheetsPage> {
+
+  @override
+  void initState() {
+    sheetsListView = ListView(
+        padding: EdgeInsets.all(10),
+        children: sheets.entries.map<Widget>((sheet) {
+          return Column(
+            children: [
+              sheet.value is! List ?
+              SheetButton(title: sheet.key, url: sheet.value) :
+              SheetFolder(title: sheet.key, children: sheet.value, notifyParent: refresh),
+              SizedBox(height: windowRelHeight(0.015))
+            ],
+          );
+        }).toList()
+    );
+    treePath.add(sheetsListView);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return PageTemplate(
       child: Column(
         children: <Widget>[
@@ -459,18 +491,19 @@ class SheetsPage extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  child: ListView(
-                      padding: EdgeInsets.all(10),
-                      children: sheets.entries.map<Widget>((sheet) {
-                        return Column(
-                          children: [
-                            SheetButton(title: sheet.key, url: sheet.value),
-                            SizedBox(height: windowRelHeight(0.015))
-                          ],
-                        );
-                      }).toList()
-                  ),
-                )
+                  child: AnimatedSwitcher(
+                    child: sheetsListView,
+                    duration: Duration(milliseconds: 300),
+                  )
+                ),
+                treePath.length > 1 ?  FlatButton(
+                  child: Icon(Icons.keyboard_return, size: 30, color: Colors.white),
+                  onPressed: () {
+                    treePath.removeLast();
+                    sheetsListView = treePath[treePath.length - 1];
+                    setState(() {});
+                  },
+                ) : SizedBox(height: 0)
               ],
             )
           )
@@ -479,6 +512,11 @@ class SheetsPage extends StatelessWidget {
       ,
     );
   }
+
+  void refresh() {
+    setState(() {});
+  }
+
 }
 
 class SheetButton extends StatelessWidget {
@@ -514,6 +552,75 @@ class SheetButton extends StatelessWidget {
                 style: mediumTitleFont2,
                 textAlign: TextAlign.center,
               )
+          )
+      ),
+    );
+  }
+
+}
+
+class SheetFolder extends StatelessWidget {
+
+
+  final title;
+  final children;
+  final notifyParent;
+
+  SheetFolder({@required this.title, @required this.children, @required this.notifyParent});
+
+  @override
+  Widget build(BuildContext context) {
+    return getFolderButton();
+  }
+
+  Widget getFolderPage() {
+    return ListView(
+          padding: EdgeInsets.all(10),
+          children: children[0].entries.map<Widget>((sheet) {
+            return Column(
+              children: [
+                sheet.value is! List ?
+                SheetButton(title: sheet.key, url: sheet.value) :
+                SheetFolder(title: sheet.key, children: sheet.value, notifyParent: notifyParent),
+                SizedBox(height: windowRelHeight(0.015))
+              ],
+            );
+          }).toList()
+      );
+  }
+
+  Widget getFolderButton() {
+    return FlatButton(
+      onPressed: () {
+        sheetsListView = getFolderPage();
+        treePath.add(sheetsListView);
+        notifyParent();
+      },
+      child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.blue[100], Colors.grey[100]],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          height: windowRelHeight(0.115),
+          child: Stack(
+            children: [
+              Center(
+                  child: Text(
+                    title,
+                    style: mediumTitleFont2,
+                    textAlign: TextAlign.center,
+                  )
+              ),
+              Align(
+                child: Icon(Icons.folder_open, size: 20, color: Colors.blueAccent),
+                alignment: Alignment.bottomRight,
+              )
+            ],
           )
       ),
     );
