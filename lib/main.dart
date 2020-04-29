@@ -465,6 +465,7 @@ class _SheetsPageState extends State<SheetsPage> {
           );
         }).toList()
     );
+    treePath = [];
     treePath.add(sheetsListView);
     super.initState();
   }
