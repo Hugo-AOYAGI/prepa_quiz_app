@@ -19,6 +19,10 @@
         [
             "Francais",
             "FRA"
+        ],
+        [
+            "Anglais",
+            "ENG"
         ]
     ],
     "categories": {
@@ -207,12 +211,16 @@
         ],
         "ANG": [
             [
-                "Culture générale",
+                "Culture & Société",
                 "00"
             ],
             [
                 "Vocabulaire",
                 "01"
+            ],
+            [
+                "Exemples de Khôlles",
+                "02"
             ]
         ]
     }
