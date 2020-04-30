@@ -440,6 +440,7 @@ class StatsPageBox extends StatelessWidget {
 
 Widget sheetsListView;
 List<dynamic> treePath = [];
+List<String> treePathNames = [];
 
 class SheetsPage extends StatefulWidget {
   @override
@@ -466,6 +467,8 @@ class _SheetsPageState extends State<SheetsPage> {
         }).toList()
     );
     treePath = [];
+    treePathNames = [];
+    treePathNames.add("home");
     treePath.add(sheetsListView);
     super.initState();
   }
@@ -478,7 +481,7 @@ class _SheetsPageState extends State<SheetsPage> {
         children: <Widget>[
           TitleAndSubtitle(
             title: "Fiches",
-            subtitle: "",
+            subtitle: treePathNames.length == 1 ? "" : treePathNames[treePathNames.length - 1],
             titleAlignment: Alignment.topCenter,
             subtitleAlignment: Alignment.topCenter,
             padding: [0, 0, 20, 0]
@@ -501,6 +504,7 @@ class _SheetsPageState extends State<SheetsPage> {
                   child: Icon(Icons.keyboard_return, size: 30, color: Colors.white),
                   onPressed: () {
                     treePath.removeLast();
+                    treePathNames.removeLast();
                     sheetsListView = treePath[treePath.length - 1];
                     setState(() {});
                   },
@@ -595,6 +599,7 @@ class SheetFolder extends StatelessWidget {
       onPressed: () {
         sheetsListView = getFolderPage();
         treePath.add(sheetsListView);
+        treePathNames.add(title);
         notifyParent();
       },
       child: Container(
