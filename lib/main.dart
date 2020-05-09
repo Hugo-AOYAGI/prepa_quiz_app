@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'fontStyles.dart';
 import 'components.dart';
@@ -534,11 +535,16 @@ class SheetButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      onPressed: () {
-        Navigator.of(context).push(slideTransitionBuilder(
-            menu: SheetMenu(url: url),
-            begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0)
-        ));
+      onPressed: () async {
+        if (title.startsWith("pdf.")) {
+          launch(url);
+        } else {
+          Navigator.of(context).push(slideTransitionBuilder(
+              menu: SheetMenu(url: url),
+              begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0)
+          ));
+        }
+
       },
       child: Container(
         padding: EdgeInsets.all(20),
@@ -553,7 +559,7 @@ class SheetButton extends StatelessWidget {
           height: windowRelHeight(0.115),
           child: Center(
               child: Text(
-                title,
+                title.replaceAll(new RegExp(r'pdf.'), ""),
                 style: mediumTitleFont2,
                 textAlign: TextAlign.center,
               )
