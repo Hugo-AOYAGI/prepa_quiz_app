@@ -18,6 +18,7 @@ import 'categoryMenu.dart';
 import 'quizMenu.dart';
 import 'splashScreen.dart';
 import 'finishedQuizMenu.dart';
+import 'infoMenu.dart';
 import 'sheetMenu.dart';
 
 import 'package:flutter/foundation.dart'
@@ -40,7 +41,10 @@ dynamic categories;
 dynamic subjects;
 dynamic selectedCategories;
 dynamic sheets;
+String totalNumberQuestions;
 ValueNotifier<List<int>> selectedLen = ValueNotifier([0, 0]);
+
+ValueNotifier<int> percentage = ValueNotifier(0);
 
 void loadData() async {
   print("Loading Data...");
@@ -62,6 +66,11 @@ void loadData() async {
   print("Loading Sheets...");
   final sheetsResponse = await http.get("https://quiz-app-db-sheets.glitch.me/sheets");
   sheets = json.decode(sheetsResponse.body);
+
+  final lenResponse = await http.get("https://quiz-app-db.glitch.me/questions_len");
+  totalNumberQuestions = lenResponse.body;
+
+  print(totalNumberQuestions);
 
   print("Data loaded...");
   splashScreenKey.currentState.loadMenu();
@@ -302,11 +311,28 @@ class AllQuiz extends StatelessWidget {
   }
 }
 
+Future<bool> getLearntPercentage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var learnedPaths = prefs.getStringList("learnedPaths") == null ? [] : prefs.getStringList("learnedPaths");
+  var selected = prefs.getString("selectedCategories") == null ? '["ALL"]' : prefs.getString("selectedCategories");
+
+  final percentLearntResponse = await http.post("https://quiz-app-db.glitch.me/learned_percent", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
+
+  print(percentLearntResponse.body);
+
+  percentage.value = int.parse(percentLearntResponse.body);
+
+  return true;
+
+}
+
 
 class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getLearntPercentage();
+
     return PageTemplate(
       child: Column(
         children: <Widget>[
@@ -326,16 +352,18 @@ class HomePage extends StatelessWidget {
           ),
           SizedBox(height: windowRelHeight(0.025),),
           CurrentQuizBox(),
-          SizedBox(height: windowRelHeight(0.025),),
+          SizedBox(height: windowRelHeight(0.175),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
+              InfoButton()
             ],
           ),
         ],
       )
     );
   }
+
 }
 
 class CurrentQuizBox extends StatelessWidget {
@@ -346,12 +374,17 @@ class CurrentQuizBox extends StatelessWidget {
         height: 0.25,
         child: Column(
           children: <Widget>[
-            BoxCategory(
-              title: "   Quiz Actuel",
-              subtitle: "0% appris",
-              icon: Icons.question_answer,
-              iconColor: Colors.red,
-              onPressed: () {},
+            ValueListenableBuilder<int>(
+              valueListenable: percentage,
+              builder: (context, value, _) {
+                return BoxCategory(
+                  title: "   Quiz Actuel",
+                  subtitle: value.toString() + "% appris",
+                  icon: Icons.question_answer,
+                  iconColor: Colors.red,
+                  onPressed: () {},
+                );
+              }
             ),
             SeparatorMenuBox(),
             SizedBox(height: windowRelHeight(0.0375),),
@@ -364,80 +397,30 @@ class CurrentQuizBox extends StatelessWidget {
   }
 }
 
-class QuickQuizBox extends StatelessWidget {
+class InfoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        Navigator.push(context, scaleTransitionBuilder(
+            menu: InfoMenu(),
+            duration: 300)
+        );
       },
-      child:RoundedMenuBox(
-        width: 0.35,
-        square: true,
-        height: 0.35,
-        child: Row(
-          children: <Widget>[
-            VerticalLine(height: 70, width: 3, colors: [Colors.blue, Colors.green],),
-            SizedBox(width: 15,),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("Quick",
-                  style: TextStyle(
-                      fontFamily: "Montserrat",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
-                      color: Colors.blueGrey
-                  ),
-                ),
-                SizedBox(height: 5,),
-                Text("QUIZ",
-                  style: TextStyle(
-                      fontFamily: "LibreCaslonText",
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                      color: Colors.blue
-                  ),
-                )
-              ],
-            )
-          ],
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(windowRelWidth(0.15))),
+        ),
+        child: Icon(
+          Icons.info_outline,
+          color: Colors.white,
+          size: 35
         ),
       )
     );
   }
 }
 
-class StatsPageBox extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: RoundedMenuBox(
-        width: 0.35,
-        square: true,
-        height: 0.35,
-        child: Column(
-          children: <Widget>[
-            Icon(Icons.library_books, color: Colors.cyan,),
-            SizedBox(height: windowRelHeight(0.0025),),
-            Text("Your \n Statistics",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 17,
-                fontFamily: "Montserrat",
-                fontWeight: FontWeight.w600,
-                color: Colors.lightBlueAccent,
-              )
-            ),
-            SizedBox(height: windowRelHeight(0.02),),
-            HorizontalLine(length: 80, width: 3, colors: [Colors.cyan, Colors.blue])
-          ],
-        ),
-      )
-    );
-  }
-}
 
 Widget sheetsListView;
 List<dynamic> treePath = [];

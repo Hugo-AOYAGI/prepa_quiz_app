@@ -40,13 +40,16 @@ class QuizMenu extends StatelessWidget {
     getNewQuestionPage();
 
 
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          UpperInfoBar(),
-          MainFrame(),
-        ],
-      )
+    return WillPopScope(
+      onWillPop: getLearntPercentage,
+      child: Scaffold(
+          body: Column(
+            children: <Widget>[
+              UpperInfoBar(),
+              MainFrame(),
+            ],
+          )
+      ),
     );
   }
 
