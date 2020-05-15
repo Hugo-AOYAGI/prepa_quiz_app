@@ -16,7 +16,7 @@ class InfoMenu extends StatelessWidget {
         backgroundColor: Colors.grey[900].withOpacity(0.2),
         body: Center(
             child: Container(
-                height: windowRelHeight(0.4),
+                height: windowRelHeight(0.65),
                 width: windowRelWidth(0.92),
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -25,7 +25,7 @@ class InfoMenu extends StatelessWidget {
                 ),
                 child:  Container(
                   width: windowRelWidth(0.95),
-                  padding: EdgeInsets.all(45),
+                  padding: EdgeInsets.all(35),
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: windowRelHeight(0)),
@@ -53,6 +53,20 @@ class InfoMenu extends StatelessWidget {
                       InkWell(
                           child: new Text('Voir le nombre de questions par chapitre', style: mediumTitleFont),
                           onTap: () => launch('https://quiz-app-db.glitch.me/')
+                      ),
+                      SizedBox(height: windowRelHeight(0.055)),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                              text: "Si vous trouvez une erreur dans l'une des questions, n'hésitez pas à me contacter par email : ",
+                              style: mediumTitleFont2
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: windowRelHeight(0.015)),
+                      InkWell(
+                          child: new Text('aoyagihugo@gmail.com', style: mediumTitleFont),
+                          onTap: () => launch("mailto:aoyagihugo@gmail.com?")
                       ),
                     ],
                   )
