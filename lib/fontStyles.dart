@@ -50,7 +50,7 @@ final mediumTitleFont3 = TextStyle(
 
 final mediumTitleFont4 = TextStyle(
     fontFamily: "Montserrat",
-    fontSize: 23,
+    fontSize: 23*sizeCoeff,
     fontWeight: FontWeight.w900,
     color: Colors.white,
     letterSpacing: 1.1

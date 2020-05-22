@@ -152,7 +152,7 @@ class RoundedMenuButton extends StatelessWidget {
     return SizedBox(
       height: 30*sizeCoeff,
       child: OutlineButton(
-        child: Text(text),
+        child: Text(text, style: TextStyle(fontSize: 14*(sizeCoeff+0.1))),
         borderSide: BorderSide(color: color, width: 2),
         textColor: color,
         onPressed: onPressed,
@@ -187,7 +187,13 @@ class ConfirmButtonState extends State<ConfirmButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {downAnimation(); widget.command();},
+      onTap: () {
+        downAnimation();
+        widget.command();
+        Future.delayed(Duration(milliseconds: 300), () {
+          upAnimation(LongPressEndDetails());
+        });
+      },
       onTapDown: (TapDownDetails details) {downAnimation();},
       onLongPressEnd: upAnimation,
       child: AnimatedContainer(
@@ -198,7 +204,7 @@ class ConfirmButtonState extends State<ConfirmButton> {
           color: _backgroundColor,
           border: Border.fromBorderSide(border),
         ),
-        child: Center(child: Text(widget.text, style: TextStyle(color: _fontColor, fontWeight: FontWeight.w700),))
+        child: Center(child: Text(widget.text, style: TextStyle(color: _fontColor, fontWeight: FontWeight.w700, fontSize: 14*(sizeCoeff + 0.1)),))
       )
     );
   }

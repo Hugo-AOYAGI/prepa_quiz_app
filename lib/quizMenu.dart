@@ -83,7 +83,7 @@ class LeaveButton extends StatelessWidget {
     return SizedBox(
       width: windowRelWidth(0.15),
       child: FlatButton(
-        child: Icon(Icons.close, color: Colors.red[200], size: 35),
+        child: Icon(Icons.close, color: Colors.red[200], size: 35*(sizeCoeff + 0.1)),
         onPressed: () {
           Navigator.pop(context);
         },
@@ -148,7 +148,7 @@ class ConfirmQuestionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       heroTag: tag == null ? "0": tag,
-      child: Icon(icon == null ? Icons.check : icon, color: Colors.white, size: 40),
+      child: Icon(icon == null ? Icons.check : icon, color: Colors.white, size: 40*(sizeCoeff+0.1)),
       backgroundColor: Colors.blue[700],
       onPressed: command,
     );

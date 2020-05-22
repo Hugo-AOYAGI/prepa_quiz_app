@@ -37,10 +37,10 @@ class MainFrame extends StatelessWidget {
         child:  Container(
             width: windowRelWidth(0.95),
             padding: EdgeInsets.all(35),
-            child: Column(
+            child: ListView(
               children: <Widget>[
                 SizedBox(height: windowRelHeight(0)),
-                Icon(Icons.info_outline, size: 40, color: Colors.lightBlue,),
+                Icon(Icons.info_outline, size: 40*(sizeCoeff + 0.1), color: Colors.lightBlue,),
                 SizedBox(height: windowRelHeight(0.025)),
                 Center(
                   child: RichText(
@@ -82,7 +82,7 @@ class MainFrame extends StatelessWidget {
                     onTap: () => launch("mailto:aoyagihugo@gmail.com?")
                 ),
                 SizedBox(height: windowRelHeight(0.05)),
-                Icon(Icons.settings_applications, size: 40, color: Colors.lightBlue,),
+                Icon(Icons.settings_applications, size: 40*(sizeCoeff + 0.1), color: Colors.lightBlue,),
                 SizedBox(height: windowRelHeight(0.025)),
                 GestureDetector(
                   onTap: () async {
