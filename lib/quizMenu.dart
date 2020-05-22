@@ -19,6 +19,8 @@ ValueNotifier<int> questionIndex = ValueNotifier(0);
 Question currentQuestion;
 Question nextQuestion;
 
+ValueNotifier<String> currPath = ValueNotifier("None");
+
 ValueNotifier<QuestionPage> currPage;
 
 ValueNotifier<List<Widget>> pages = ValueNotifier([]);
@@ -36,6 +38,7 @@ class QuizMenu extends StatelessWidget {
 
     loadData();
     currentQuestion = initialQuestion;
+    currPath.value = currentQuestion.questionPath;
     currPage = ValueNotifier(currentQuestion.getCard());
     getNewQuestionPage();
 
@@ -43,12 +46,7 @@ class QuizMenu extends StatelessWidget {
     return WillPopScope(
       onWillPop: getLearntPercentage,
       child: Scaffold(
-          body: Column(
-            children: <Widget>[
-              UpperInfoBar(),
-              MainFrame(),
-            ],
-          )
+          body: MainFrame(),
       ),
     );
   }
@@ -59,44 +57,22 @@ class QuizMenu extends StatelessWidget {
   }
 }
 
-class UpperInfoBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: windowRelWidth(1),
-      height: windowRelHeight(0.125),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey[400], width: 2)),
-        color: Colors.grey[100]
-      ),
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: windowRelHeight(0.05),),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              LeaveButton(),
-              QuestionIndexBox(),
-            ],
-          ),
-        ],
-      )
-    );
-  }
-}
-
 class QuestionIndexBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      message: "Nombre de questions répondues",
-      child: ValueListenableBuilder<int>(
-        valueListenable: questionIndex,
-        builder: (context, value, _) {
-          return Text("#" + value.toString(), style: mediumTitleFont2);
-        }
-      )
-
+    return ValueListenableBuilder<String>(
+      valueListenable: currPath,
+      builder: (context, value, _) {
+        return Tooltip(
+            message: value,
+            child: ValueListenableBuilder<int>(
+                valueListenable: questionIndex,
+                builder: (context, value, _) {
+                  return Text("#" + value.toString(), style: mediumTitleFont4);
+                }
+            )
+        );
+      }
     );
   }
 }
@@ -107,11 +83,11 @@ class LeaveButton extends StatelessWidget {
     return SizedBox(
       width: windowRelWidth(0.15),
       child: FlatButton(
-        child: Icon(Icons.keyboard_return, color: Colors.red[300], size: 30),
+        child: Icon(Icons.close, color: Colors.red[200], size: 35),
         onPressed: () {
           Navigator.pop(context);
         },
-        color: Colors.grey[100],
+        color: Color(0x00000000),
       ),
     );
   }
@@ -125,33 +101,36 @@ class MainFrame extends StatelessWidget {
     pagesController = PageController(
         initialPage: 0
     );
-
     return Container(
-      height: windowRelHeight(0.875),
+      height: windowRelHeight(1),
       width: windowRelWidth(1),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors:  [
-            Colors.lightBlue[100],
-            Colors.cyan[100],
-          ]
-        ),
+          gradient: isHighContrast.value == true ? highContrastGradient : lowContrastGradient,
       ),
-      child: ValueListenableBuilder<Widget>(
-        valueListenable: currPage,
-        builder: (context, value, _) {
-          return AnimatedSwitcher(
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return SlideTransition(child: child, position: Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset(0.0, 0.0)).animate(animation),);
-            },
-            child: value,
-            duration: Duration(milliseconds: 300),
-          );
-        }
+      child: Column(
+        children: [
+          SizedBox(height: windowRelHeight(0.035)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              LeaveButton(),
+              QuestionIndexBox()
+            ],
+          ),
+          ValueListenableBuilder<Widget>(
+              valueListenable: currPage,
+              builder: (context, value, _) {
+                return AnimatedSwitcher(
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    return SlideTransition(child: child, position: Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset(0.0, 0.0)).animate(animation),);
+                  },
+                  child: value,
+                  duration: Duration(milliseconds: 300),
+                );
+              }
+          ),
+        ]
       )
-
     );
   }
 }

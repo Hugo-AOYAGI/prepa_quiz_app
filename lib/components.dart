@@ -64,7 +64,7 @@ class TitleAndSubtitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        SizedBox(height: 30),
+        SizedBox(height: 30*sizeCoeff),
         PaddedAlignBox(
           align: titleAlignment,
           padding: padding,
@@ -97,18 +97,34 @@ class RoundedMenuBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Container(
+        child: SizedBox(
           width: widgetRelWidth(context, width),
           height: square ? widgetRelWidth(context, width) : widgetRelHeight(context, height),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-            color: Colors.white
-          ),
-          child: Padding(
-            child: child,
-            padding: EdgeInsets.all(20),
+          child: Card(
+            color: Colors.white,
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(30*sizeCoeff)),
+            ),
+            child:  Padding(
+              child: child,
+              padding: EdgeInsets.all(20*sizeCoeff),
+            ),
           )
         )
+
+        //Container(
+          //width: widgetRelWidth(context, width),
+          //height: square ? widgetRelWidth(context, width) : widgetRelHeight(context, height),
+          //decoration: BoxDecoration(
+            //borderRadius: BorderRadius.all(Radius.circular(30)),
+            //color: Colors.white
+          //),
+          //child: Padding(
+            //child: child,
+            //padding: EdgeInsets.all(20),
+          //)
+        //)
     );
   }
 }
@@ -118,10 +134,7 @@ class SeparatorMenuBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 1,
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.blueGrey, width: 1))
-      ),
+      height: 0,
     );
   }
 }
@@ -137,7 +150,7 @@ class RoundedMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 30,
+      height: 30*sizeCoeff,
       child: OutlineButton(
         child: Text(text),
         borderSide: BorderSide(color: color, width: 2),
@@ -179,8 +192,8 @@ class ConfirmButtonState extends State<ConfirmButton> {
       onLongPressEnd: upAnimation,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 400),
-        height: 30,
-        width: 120,
+        height: 30*sizeCoeff,
+        width: 120*sizeCoeff,
         decoration: BoxDecoration(
           color: _backgroundColor,
           border: Border.fromBorderSide(border),
@@ -249,12 +262,12 @@ class BoxCategory extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Row(
                       children: <Widget>[
-                        icon == null ? SizedBox(height:0) : Icon(icon, size: 20, color: iconColor,),
+                        icon == null ? SizedBox(height:0) : Icon(icon, size: 20*(sizeCoeff + 0.1), color: iconColor,),
                         Text(title, style: mediumTitleFont)
                       ],
                     )
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 15*(sizeCoeff + 0.1)),
                 noLower ? SizedBox() :
                 Row(
                   children: <Widget>[

@@ -62,6 +62,12 @@ class _QuestionPageState extends State<QuestionPage> {
             border: Border.all(color: Colors.grey[200], width: 1),
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(windowRelWidth(0.075))),
+            boxShadow: [BoxShadow(
+              color: Color(0x39020202),
+              offset: Offset(1, 1),
+              spreadRadius: 1,
+              blurRadius: 3
+            )],
           ),
           child: Column(
             children: <Widget>[
@@ -226,6 +232,7 @@ class _QuestionPageState extends State<QuestionPage> {
                             child: ConfirmQuestionButton(command: () {
                               learntQuestion.value = false;
                               currPage.value = nextQuestion.getCard();
+                              currPath.value = nextQuestion.questionPath;
                               getNewQuestionPage();
                               incrementQuestionIndex();
                             }, icon: Icons.arrow_forward, tag: "1")
@@ -339,10 +346,10 @@ class CornerClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     
-    path.lineTo(0, size.height - windowRelWidth(0.125));
-    path.lineTo(windowRelWidth(0.125), size.height);
-    path.lineTo(size.width, size.height);
-    path.lineTo(size.width, 0);
+    path.lineTo(-10, size.height - windowRelWidth(0.125) - 10);
+    path.lineTo(windowRelWidth(0.125) + 10, size.height + 10);
+    path.lineTo(size.width + 10, size.height + 10);
+    path.lineTo(size.width + 10, -10);
 
     return path;
   }
@@ -388,9 +395,10 @@ class UpperQuestionInfoBar extends StatelessWidget {
         border: Border(bottom: BorderSide(color: Colors.grey[300]))
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(width: 10,),
-          Image(image: AssetImage("assets/subjects/" + subjCode + ".png"), width: 30, height: 30),
+          Image(image: AssetImage("assets/subjects/" + subjCode + ".png"), width: 25, height: 25),
           SizedBox(width: 10,),
           Container(
             width: windowRelWidth(0.73),

@@ -44,7 +44,31 @@ dynamic sheets;
 String totalNumberQuestions;
 ValueNotifier<List<int>> selectedLen = ValueNotifier([0, 0]);
 
+ValueNotifier<bool> isHighContrast = ValueNotifier(true);
+
 ValueNotifier<int> percentage = ValueNotifier(0);
+
+LinearGradient highContrastGradient = LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  stops: [0, 0.9],
+  colors: <Color> [
+    Colors.purple[900],
+    Color(0xFF006cda),
+  ]
+);
+LinearGradient lowContrastGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0, 0.25, 1],
+    colors: <Color> [
+      Color(0xFF8e75ff),
+      Color(0xFF617fff),
+      Color(0xFF7ac0ff),
+    ]
+);
+
+
 
 void loadData() async {
   print("Loading Data...");
@@ -71,6 +95,11 @@ void loadData() async {
   totalNumberQuestions = lenResponse.body;
 
   print(totalNumberQuestions);
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  isHighContrast.value = prefs.getBool("isHighContrast") == null ? true : prefs.getBool("isHighContrast");
+  sizeCoeff = prefs.getDouble("sizeCoeff") == null ? 0.9 : prefs.getDouble("sizeCoeff");
+
 
   print("Data loaded...");
   splashScreenKey.currentState.loadMenu();
@@ -111,19 +140,11 @@ class MainMenu extends StatelessWidget {
       child: Scaffold(
           body: Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      stops: [0, 1.8],
-                      colors: <Color> [
-                        Colors.purple[800],
-                        Color(0xFF00C8D9),
-                      ]
-                  )
+                  gradient: isHighContrast.value == true ? highContrastGradient : lowContrastGradient,
               ),
               child: MainListView()
           )
-      ),
+	),
     );
   }
 }
@@ -236,8 +257,6 @@ class StartQuizBox extends StatelessWidget {
       child: Column(
         children: <Widget>[
           SelectedCategories(),
-          SizedBox(height: windowRelHeight(0.015)),
-          SeparatorMenuBox(),
           SizedBox(height: windowRelHeight(0.0275),),
           ConfirmButton(text: "CRÉER", command: () {
             if (selectedLen.value[0] == 0) {
@@ -267,7 +286,7 @@ class SelectedCategories extends StatelessWidget {
           return BoxCategory(
             buttonColor: Colors.blue,
             icon: Icons.category,
-            iconColor: Colors.purple,
+            iconColor: Colors.blueAccent,
             onPressed: () {
               Navigator.push(context, slideTransitionBuilder(
                   menu: CategoryMenu(),
@@ -294,14 +313,12 @@ class AllQuiz extends StatelessWidget {
         children: <Widget>[
           BoxCategory(
             icon: Icons.all_inclusive,
-            iconColor: Colors.deepOrange,
+            iconColor: Colors.blueAccent,
             title: "  Toutes catégories",
             subtitle: "",
             onPressed: () {}
           ),
           SizedBox(height: windowRelHeight(0.015)),
-          SeparatorMenuBox(),
-          SizedBox(height: windowRelHeight(0.0275),),
           ConfirmButton(text: "CRÉER", command: () {
             createQuiz("ALL", context);
           })
@@ -352,13 +369,14 @@ class HomePage extends StatelessWidget {
           ),
           SizedBox(height: windowRelHeight(0.025),),
           CurrentQuizBox(),
-          SizedBox(height: windowRelHeight(0.175),),
+          SizedBox(height: windowRelHeight(0.225),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               InfoButton()
             ],
           ),
+
         ],
       )
     );
@@ -381,13 +399,12 @@ class CurrentQuizBox extends StatelessWidget {
                   title: "   Quiz Actuel",
                   subtitle: value.toString() + "% appris",
                   icon: Icons.question_answer,
-                  iconColor: Colors.red,
+                  iconColor: Colors.blueAccent,
                   onPressed: () {},
                 );
               }
             ),
-            SeparatorMenuBox(),
-            SizedBox(height: windowRelHeight(0.0375),),
+            SizedBox(height: windowRelHeight(0.0275),),
             ConfirmButton(text: "CONTINUER", command: () {
               resumeQuiz(context);
             },)
@@ -407,16 +424,11 @@ class InfoButton extends StatelessWidget {
             duration: 300)
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(windowRelWidth(0.15))),
-        ),
-        child: Icon(
-          Icons.info_outline,
-          color: Colors.white,
-          size: 35
-        ),
-      )
+      child: Icon(
+                Icons.info_outline,
+                color: Colors.blue[100],
+                size: 35*(sizeCoeff + 0.1)
+            ),
     );
   }
 }
@@ -485,7 +497,7 @@ class _SheetsPageState extends State<SheetsPage> {
                   )
                 ),
                 treePath.length > 1 ?  FlatButton(
-                  child: Icon(Icons.keyboard_return, size: 30, color: Colors.white),
+                  child: Icon(Icons.keyboard_return, size: 30*(sizeCoeff + 0.1), color: Colors.white),
                   onPressed: () {
                     treePath.removeLast();
                     treePathNames.removeLast();
@@ -532,11 +544,7 @@ class SheetButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.blue[100], Colors.grey[100]],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight
-            ),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
           height: windowRelHeight(0.115),
@@ -591,33 +599,30 @@ class SheetFolder extends StatelessWidget {
         treePathNames.add(title);
         notifyParent();
       },
-      child: Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.blue[100], Colors.grey[100]],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          height: windowRelHeight(0.115),
-          child: Stack(
-            children: [
-              Center(
-                  child: Text(
-                    title,
-                    style: mediumTitleFont2,
-                    textAlign: TextAlign.center,
-                  )
-              ),
-              Align(
-                child: Icon(Icons.folder_open, size: 20, color: Colors.blueAccent),
-                alignment: Alignment.bottomRight,
-              )
-            ],
-          )
-      ),
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15*sizeCoeff)),
+        elevation: 10,
+        child: Container(
+            padding: EdgeInsets.all(20),
+            height: windowRelHeight(0.115),
+            child: Stack(
+              children: [
+                Center(
+                    child: Text(
+                      title,
+                      style: mediumTitleFont2,
+                      textAlign: TextAlign.center,
+                    )
+                ),
+                Align(
+                  child: Icon(Icons.folder_open, size: 20*(sizeCoeff + 0.1), color: Colors.blueAccent),
+                  alignment: Alignment.bottomRight,
+                )
+              ],
+            )
+        ),
+      )
     );
   }
 
