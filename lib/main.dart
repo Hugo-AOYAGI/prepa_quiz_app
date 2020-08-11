@@ -19,6 +19,7 @@ import 'quizMenu.dart';
 import 'splashScreen.dart';
 import 'finishedQuizMenu.dart';
 import 'infoMenu.dart';
+import 'settingsMenu.dart';
 import 'sheetMenu.dart';
 
 import 'package:flutter/foundation.dart'
@@ -41,10 +42,12 @@ dynamic categories;
 dynamic subjects;
 dynamic selectedCategories;
 dynamic sheets;
+bool patreonMenuPopped = false;
+int appCount;
 String totalNumberQuestions;
 ValueNotifier<List<int>> selectedLen = ValueNotifier([0, 0]);
 
-ValueNotifier<bool> isHighContrast = ValueNotifier(true);
+ValueNotifier<bool> isHighContrast = ValueNotifier(false);
 
 ValueNotifier<int> percentage = ValueNotifier(0);
 
@@ -72,7 +75,7 @@ LinearGradient lowContrastGradient = LinearGradient(
 
 void loadData() async {
   print("Loading Data...");
-  final response = await http.get("https://quiz-app-db.glitch.me/json");
+  final response = await http.get("https://quiz-app-express-db.azurewebsites.net/json");
   final jsonData = json.decode(response.body);
 
   categories = jsonData["categories"];
@@ -88,18 +91,21 @@ void loadData() async {
     }
   }
   print("Loading Sheets...");
-  final sheetsResponse = await http.get("https://quiz-app-db-sheets.glitch.me/sheets");
+  final sheetsResponse = await http.get("https://quiz-app-express-db.azurewebsites.net/sheets");
   sheets = json.decode(sheetsResponse.body);
 
-  final lenResponse = await http.get("https://quiz-app-db.glitch.me/questions_len");
+  final lenResponse = await http.get("https://quiz-app-express-db.azurewebsites.net/questions_len");
   totalNumberQuestions = lenResponse.body;
 
   print(totalNumberQuestions);
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  isHighContrast.value = prefs.getBool("isHighContrast") == null ? true : prefs.getBool("isHighContrast");
+  isHighContrast.value = prefs.getBool("isHighContrast") == null ? false : prefs.getBool("isHighContrast");
   sizeCoeff = prefs.getDouble("sizeCoeff") == null ? 0.9 : prefs.getDouble("sizeCoeff");
 
+  appCount = prefs.getInt("appCounter") == null ? 0 : prefs.getInt("appCounter");
+  appCount++;
+  prefs.setInt("appCounter", appCount);
 
   print("Data loaded...");
   splashScreenKey.currentState.loadMenu();
@@ -134,10 +140,20 @@ class MainMenu extends StatelessWidget {
   Widget build(BuildContext context) {
 
     mainContext = context;
+    if (appCount%20 == 5 && !patreonMenuPopped) {
+      patreonMenuPopped = true;
+      Future.delayed(Duration(milliseconds: 500), () {
+        Navigator.push(context, scaleTransitionBuilder(
+            menu: PatreonMenu(),
+            duration: 300)
+        );
+      });
+    }
 
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Container(
               decoration: BoxDecoration(
                   gradient: isHighContrast.value == true ? highContrastGradient : lowContrastGradient,
@@ -333,7 +349,7 @@ Future<bool> getLearntPercentage() async {
   var learnedPaths = prefs.getStringList("learnedPaths") == null ? [] : prefs.getStringList("learnedPaths");
   var selected = prefs.getString("selectedCategories") == null ? '["ALL"]' : prefs.getString("selectedCategories");
 
-  final percentLearntResponse = await http.post("https://quiz-app-db.glitch.me/learned_percent", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
+  final percentLearntResponse = await http.post("https://quiz-app-express-db.azurewebsites.net/learned_percent", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
 
   print(percentLearntResponse.body);
 
@@ -353,12 +369,29 @@ class HomePage extends StatelessWidget {
     return PageTemplate(
       child: Column(
         children: <Widget>[
-          TitleAndSubtitle(
-            title: "QMIN",
-            subtitle: "PTSI / PT",
-            titleAlignment: Alignment.centerLeft,
-            subtitleAlignment: Alignment.centerLeft,
-            padding: [40, 0, 20, 0]
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: windowRelWidth(0.05),),
+              Column(
+                children: [
+                  SizedBox(height: windowRelHeight(0.075)),
+                  Container(
+                    width: windowRelWidth(0.15),
+                    child: Image.asset("assets/icon/icon_fg.png"),
+                  ),
+                ],
+              ),
+              TitleAndSubtitle(
+                  title: "Les Taupins",
+                  subtitle: "",
+                  titleAlignment: Alignment.centerLeft,
+                  subtitleAlignment: Alignment.centerLeft,
+                  padding: [10, 0, 20, 0]
+              ),
+
+            ],
           ),
           SizedBox(height: windowRelHeight(0.03),),
           Row(
@@ -369,14 +402,18 @@ class HomePage extends StatelessWidget {
           ),
           SizedBox(height: windowRelHeight(0.025),),
           CurrentQuizBox(),
-          SizedBox(height: windowRelHeight(0.225),),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              InfoButton()
-            ],
-          ),
-
+          SizedBox(height: windowRelHeight(0.055),),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InfoButton(),
+                SizedBox(width: windowRelWidth(0.05)),
+                SettingsButton(),
+                SizedBox(width: windowRelWidth(0.05))
+              ],
+            )
+          )
         ],
       )
     );
@@ -426,9 +463,28 @@ class InfoButton extends StatelessWidget {
       },
       child: Icon(
                 Icons.info_outline,
-                color: Colors.blue[100],
+                color: Colors.grey[100],
                 size: 35*(sizeCoeff + 0.1)
             ),
+    );
+  }
+}
+
+class SettingsButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, scaleTransitionBuilder(
+            menu: SettingsMenu(),
+            duration: 300)
+        );
+      },
+      child: Icon(
+          Icons.settings_applications,
+          color: Colors.grey[100],
+          size: 35*(sizeCoeff + 0.1)
+      ),
     );
   }
 }
@@ -545,7 +601,7 @@ class SheetButton extends StatelessWidget {
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(15*(sizeCoeff + 0.1)),
           ),
           height: windowRelHeight(0.115),
           child: Center(
@@ -656,7 +712,12 @@ void resumeQuiz (BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var learnedPaths = prefs.getStringList("learnedPaths") == null ? [] : prefs.getStringList("learnedPaths");
   var selected = prefs.getString("selectedCategories") == null ? '["ALL"]' : prefs.getString("selectedCategories");
-  var response = await http.post("https://quiz-app-db.glitch.me/random_path", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
+  var response = await http.post("https://quiz-app-express-db.azurewebsites.net/random_path", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
+
+  if (prefs.getInt("questionIndex") == null){
+    prefs.setInt("questionIndex", 0);
+  }
+
 
   if (response.body == "ALL LEARNED") {
     Navigator.of(context).push(scaleTransitionBuilder(
@@ -686,7 +747,7 @@ void createQuiz (String type, BuildContext context) async {
     prefs.setString("selectedCategories", json.encode(selectedCategories));
   }
 
-  var response = await http.post("https://quiz-app-db.glitch.me/random_path", body: {'learned_paths': json.encode(prefs.getStringList("learnedPaths")), "selected": prefs.getString("selectedCategories")});
+  var response = await http.post("https://quiz-app-express-db.azurewebsites.net/random_path", body: {'learned_paths': json.encode(prefs.getStringList("learnedPaths")), "selected": prefs.getString("selectedCategories")});
 
   if (response.body == "ALL LEARNED") {
     Navigator.push(context, scaleTransitionBuilder(

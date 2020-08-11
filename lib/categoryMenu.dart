@@ -36,7 +36,7 @@ class CategoryMenu extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(30))
+                    borderRadius: BorderRadius.all(Radius.circular(30*(sizeCoeff + 0.1)))
                 ),
                 height: windowRelHeight(0.925),
                 width: windowRelWidth(0.85),
@@ -59,7 +59,7 @@ class CategoryMenu extends StatelessWidget {
                   },
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Colors.green),
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20*(sizeCoeff + 0.1)), topRight: Radius.circular(20*(sizeCoeff + 0.1)))
                   ),
                 )
               )

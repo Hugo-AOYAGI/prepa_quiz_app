@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 double windowHeight;
 double windowWidth;
 
-double sizeCoeff = 0.9;
+double sizeCoeff = 0.975;
 
 
 double windowRelWidth (double relwidth) {

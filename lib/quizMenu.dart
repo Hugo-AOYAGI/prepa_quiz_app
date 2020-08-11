@@ -14,6 +14,9 @@ import 'main.dart';
 
 import 'questionPage.dart';
 
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+
 ValueNotifier<int> questionIndex = ValueNotifier(0);
 
 Question currentQuestion;
@@ -25,6 +28,8 @@ ValueNotifier<QuestionPage> currPage;
 
 ValueNotifier<List<Widget>> pages = ValueNotifier([]);
 PageController pagesController;
+
+final reportController = TextEditingController();
 
 
 class QuizMenu extends StatelessWidget {
@@ -46,6 +51,7 @@ class QuizMenu extends StatelessWidget {
     return WillPopScope(
       onWillPop: getLearntPercentage,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
           body: MainFrame(),
       ),
     );
@@ -63,16 +69,94 @@ class QuestionIndexBox extends StatelessWidget {
     return ValueListenableBuilder<String>(
       valueListenable: currPath,
       builder: (context, value, _) {
-        return Tooltip(
-            message: value,
-            child: ValueListenableBuilder<int>(
-                valueListenable: questionIndex,
-                builder: (context, value, _) {
-                  return Text("#" + value.toString(), style: mediumTitleFont4);
-                }
-            )
+        return SizedBox(
+          width: windowRelWidth(0.2),
+          child: Tooltip(
+              message: value,
+              child: ValueListenableBuilder<int>(
+                  valueListenable: questionIndex,
+                  builder: (context, value, _) {
+                    return Text("#" + value.toString(), style: mediumTitleFont4);
+                  }
+              )
+          ),
         );
       }
+    );
+  }
+}
+
+class ReportQuestionButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+        child: Icon(Icons.flag, color: Colors.black26, size: 35*(sizeCoeff + 0.1)),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              // return object of type Dialog
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.all(
+                        Radius.circular(10.0)
+                    )
+                ),
+                content: Builder(
+                  builder: (context) {
+                    return TextField(
+                      maxLines: 3,
+                      minLines: 1,
+                      maxLength: 256,
+                      controller: reportController,
+                    );
+                  }
+                ),
+                title: Text("Signaler un problème", style: mediumTitleFont2),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    child: Text("Annuler", style: mediumTitleFont),
+                    onPressed: () {
+                      reportController.text = "";
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("Confirmer", style: mediumTitleFont,),
+                    onPressed: () async {
+
+                      Navigator.of(context).pop();
+
+                      final smtpServer = gmail("taupins.questions@gmail.com", "{_-e{f5DczQcjyd%");
+
+                      final message = Message()
+                        ..from = Address("taupins.questions@gmail.com", 'App Report')
+                        ..recipients.add("taupins.questions@gmail.com")
+                        ..subject = 'Problem Report : ${DateTime.now()}'
+                        ..text = currPath.value + ": \n" + reportController.text;
+
+                      try {
+                        final sendReport = await send(message, smtpServer);
+                        print('Message sent: ' + sendReport.toString());
+                      } on MailerException catch (e) {
+                        print('Message not sent.');
+                        for (var p in e.problems) {
+                          print('Problem: ${p.code}: ${p.msg}');
+                        }
+                      }
+
+                      reportController.text = "";
+
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        color: Color(0x00000000),
     );
   }
 }
@@ -80,15 +164,12 @@ class QuestionIndexBox extends StatelessWidget {
 class LeaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: windowRelWidth(0.15),
-      child: FlatButton(
+    return FlatButton(
         child: Icon(Icons.close, color: Colors.red[200], size: 35*(sizeCoeff + 0.1)),
         onPressed: () {
           Navigator.pop(context);
         },
         color: Color(0x00000000),
-      ),
     );
   }
 }
@@ -114,6 +195,8 @@ class MainFrame extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               LeaveButton(),
+              ReportQuestionButton(),
+              SizedBox(width: windowRelWidth(0.20)),
               QuestionIndexBox()
             ],
           ),
@@ -172,7 +255,7 @@ class Question {
   }
 
   String getAnsPath() {
-    return "https://quiz-app-db.glitch.me/" + questionPath.split("-QST")[0] + "-ANS.png";
+    return "https://quiz-app-express-db.azurewebsites.net/" + questionPath.split("-QST")[0] + "-ANS.png";
   }
 
   bool compareResults(List<int> results) {
@@ -184,7 +267,7 @@ class Question {
   }
 
   getQuestionPath() {
-    return "https://quiz-app-db.glitch.me/" + questionPath;
+    return "https://quiz-app-express-db.azurewebsites.net/" + questionPath;
   }
 
   getCategory() {
@@ -237,7 +320,7 @@ void getNewQuestionPage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var learnedPaths = prefs.getStringList("learnedPaths") == null ? [] : prefs.getStringList("learnedPaths");
   var selected = prefs.getString("selectedCategories") == null ? '["ALL"]' : prefs.getString("selectedCategories");
-  var response = await http.post("https://quiz-app-db.glitch.me/random_path", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
+  var response = await http.post("https://quiz-app-express-db.azurewebsites.net/random_path", body: {'learned_paths': json.encode(learnedPaths), "selected": selected});
   if (response.body == "ALL LEARNED") {
     Navigator.push(mainContext, scaleTransitionBuilder(
         menu: FinishedQuizMenu(),

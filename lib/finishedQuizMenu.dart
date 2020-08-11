@@ -20,7 +20,7 @@ class FinishedQuizMenu extends StatelessWidget {
               width: windowRelWidth(0.92),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20*(sizeCoeff + 0.1)),
                 border: Border.all(width: 1, color: Colors.grey[300])
               ),
               child:  Column(
@@ -53,7 +53,7 @@ class FinishedQuizMenu extends StatelessWidget {
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.lightBlue, width: 3),
-                              borderRadius: BorderRadius.circular(10)
+                              borderRadius: BorderRadius.circular(10*(sizeCoeff + 0.1))
                           ),
                           child: Center(child: Text("Oublier tout", style: mediumTextFont2,)),
                         ),
@@ -72,7 +72,7 @@ class FinishedQuizMenu extends StatelessWidget {
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.lightBlue, width: 3),
-                              borderRadius: BorderRadius.circular(10)
+                              borderRadius: BorderRadius.circular(10*(sizeCoeff + 0.1))
                           ),
                           child: Center(child: Text("Créer un quiz", style: mediumTextFont2,)),
                         ),

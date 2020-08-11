@@ -41,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
     windowHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.cyan[500],
       body: Column(
         children: <Widget>[

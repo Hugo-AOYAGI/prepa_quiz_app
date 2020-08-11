@@ -215,7 +215,7 @@ class _QuestionPageState extends State<QuestionPage> {
                                     decoration: BoxDecoration(
                                       color: !value ? Colors.transparent : Colors.blue[100],
                                       border: Border.all(color: Colors.lightBlue, width: 3),
-                                      borderRadius: BorderRadius.circular(100),
+                                      borderRadius: BorderRadius.circular(200),
                                     ),
                                   )
                               ),
@@ -278,7 +278,7 @@ class _QuestionPageState extends State<QuestionPage> {
                   height: windowRelHeight(0.065),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.blueGrey, width: 2),
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderRadius: BorderRadius.all(Radius.circular(20*(sizeCoeff + 0.1))),
                     color: value[i - 1] == 1 ? Colors.grey[100] : Colors.white
                   ),
                   child: Center(
@@ -311,7 +311,7 @@ class _QuestionPageState extends State<QuestionPage> {
                 width: windowRelWidth(0.2),
                 height: windowRelHeight(0.05),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderRadius: BorderRadius.all(Radius.circular(20*(sizeCoeff + 0.1))),
                   border: Border.all(color: value[0] == 1 ? Colors.green[400] : Colors.red[400], width: 2)
                 ),
                 child: AnimatedAlign(
@@ -323,7 +323,7 @@ class _QuestionPageState extends State<QuestionPage> {
                     height: windowRelHeight(0.04),
                     decoration: BoxDecoration(
                       color: value[0] == 1 ? Colors.greenAccent[100].withOpacity(0.3) : Colors.redAccent[100].withOpacity(0.3),
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      borderRadius: BorderRadius.all(Radius.circular(50*(sizeCoeff + 0.1))),
                       border: Border.all(color: value[0] == 1 ? Colors.green[300] : Colors.red[300], width: 3)
                     ),
                   )
