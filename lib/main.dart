@@ -42,14 +42,20 @@ dynamic categories;
 dynamic subjects;
 dynamic selectedCategories;
 dynamic sheets;
+
 bool patreonMenuPopped = false;
 int appCount;
 String totalNumberQuestions;
+
+ValueNotifier<bool> showTutorial = ValueNotifier(false);
+
 ValueNotifier<List<int>> selectedLen = ValueNotifier([0, 0]);
 
 ValueNotifier<bool> isHighContrast = ValueNotifier(false);
 
 ValueNotifier<int> percentage = ValueNotifier(0);
+
+PageController pageController = PageController(initialPage: 1);
 
 LinearGradient highContrastGradient = LinearGradient(
   begin: Alignment.topLeft,
@@ -150,6 +156,11 @@ class MainMenu extends StatelessWidget {
       });
     }
 
+    if (appCount == 1) {
+      showTutorial.value = true;
+      startTutorial();
+    }
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -179,14 +190,14 @@ class _MainListViewState extends State<MainListView> {
 
   int _pageIndex = 1;
 
-  final _controller = PageController(initialPage: 1);
-
   @override
   Widget build(BuildContext context) {
+
     return Stack(
       children: <Widget>[
+
         PageView(
-            controller: _controller,
+            controller: pageController,
             onPageChanged: _onPageViewChange,
             scrollDirection: Axis.horizontal,
             children: <Widget>[
@@ -213,7 +224,7 @@ class _MainListViewState extends State<MainListView> {
                     ),
                     iconSize: _isCurrent ? 30 : 25,
                     onPressed: () {
-                      _controller.animateToPage(
+                      pageController.animateToPage(
                         _bottomIcons.indexOf(_icon),
                         duration: Duration(milliseconds: 500),
                         curve: Curves.linearToEaseOut
@@ -225,7 +236,18 @@ class _MainListViewState extends State<MainListView> {
               SizedBox(width: 60),
             ]
           )
+        ),
+        ValueListenableBuilder(
+          valueListenable: showTutorial,
+          builder: (context, value, _) {
+            if (value) {
+              return MainPageTutorial();
+            } else {
+              return SizedBox(width: 0,);
+            }
+          },
         )
+
       ],
     );
   }
@@ -238,6 +260,143 @@ class _MainListViewState extends State<MainListView> {
   }
 
 }
+
+
+class MainPageTutorial extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      child: ValueListenableBuilder(
+        valueListenable: tutorialStep,
+        builder: (context, value, _)  {
+
+          List step = tutorialStepDetails[value];
+
+          if (value != 0) {
+            pageController.animateToPage(step[9], duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+          }
+
+          double frameX = step[0]; double frameY = step[1]; double frameW = step[2]; double frameH = step[3];
+
+          double textX = step[4];  double textY = step[5]; double textW = step[6]; double textH = step[7];
+
+
+          return Container(
+              width: windowRelWidth(1),
+              height: windowRelHeight(1),
+              color: Colors.transparent,
+              child: Stack(
+                children: [
+
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: Container(
+                      width: windowRelWidth(1),
+                      height: frameY,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(120, 50, 50, 50),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    left: 0,
+                    top: frameY,
+                    child: Container(
+                      width: frameX,
+                      height: frameH,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(120, 50, 50, 50),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    left: frameX + frameW,
+                    top: frameY,
+                    child: Container(
+                      width: windowWidth - (frameX + frameW),
+                      height: frameH,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(120, 50, 50, 50),
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    left: 0,
+                    top: frameY + frameH,
+                    child: Container(
+                      width: windowRelWidth(1),
+                      height: windowHeight - (frameY + frameH),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(120, 50, 50, 50),
+                      ),
+                    ),
+                  ),
+
+
+                  Positioned(
+                    left: frameX,
+                    top: frameY,
+                    child: Container(
+                      width: frameW,
+                      height: frameH,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 1),
+                      ),
+                    ),
+                  ),
+
+
+                  Positioned(
+                    left: textX,
+                    top: textY,
+                    child: Container(
+                      width: textW,
+                      height: textH,
+                      padding: EdgeInsets.all(windowRelWidth(0.045)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(windowRelHeight(0.015))),
+                      ),
+                      child: Center(
+                          child: Text(
+                            step[8],
+                            style: mediumTitleFont,
+                          )
+                      ),
+                    ),
+                  ),
+
+
+                  Positioned(
+                    left: windowRelWidth(0.45),
+                    top: windowRelHeight(0.8),
+                    child: GestureDetector(
+                      child: Icon(Icons.arrow_forward, size: windowRelWidth(0.125), color: Colors.white),
+                      onTap: () {
+                        if (tutorialStep.value == tutorialStepDetails.length - 1) {
+                          showTutorial.value = false;
+                        } else {
+                          tutorialStep.value++;
+                        }
+                      },
+                    )
+                  )
+                ],
+              )
+          );
+        },
+      )
+
+    );
+  }
+}
+
 
 class QuizStartPage extends StatelessWidget {
   @override
@@ -384,7 +543,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               TitleAndSubtitle(
-                  title: "Les Taupins",
+                  title: "La Taupinière",
                   subtitle: "",
                   titleAlignment: Alignment.centerLeft,
                   subtitleAlignment: Alignment.centerLeft,
@@ -765,3 +924,26 @@ void createQuiz (String type, BuildContext context) async {
     );
   }
 }
+
+ValueNotifier<int> tutorialStep = ValueNotifier(0);
+dynamic tutorialStepDetails = [];
+
+
+void startTutorial() {
+  tutorialStepDetails = [
+    [0.0 , 0.0, 0.0, 0.0, windowRelWidth(0.15), windowRelHeight(0.3), windowRelWidth(0.7), windowRelHeight(0.25), "Bienvenue sur Les Taupins ! \n\n Ce court tutoriel vous aidera à mieux prendre en main l'application.", 0],
+    [windowRelWidth(0.1), windowRelHeight(0.325), windowRelWidth(0.8), windowRelHeight(0.25), windowRelWidth(0.15), windowRelHeight(0.05), windowRelWidth(0.7), windowRelHeight(0.25), "Cette partie correspond au quiz sur lequel vous vous entrainez actuellement. \n\n(Il contient des questions de toutes les matières par défaut)", 1],
+    [windowRelWidth(0.125), windowRelHeight(0.385), windowRelWidth(0.275), windowRelHeight(0.065), windowRelWidth(0.15), windowRelHeight(0.15), windowRelWidth(0.7), windowRelHeight(0.15), "Apprendre des questions vous permet de ne plus retomber dessus si vous avez assimilé cette notion.", 1],
+    [windowRelWidth(0.325), windowRelHeight(0.6175), windowRelWidth(0.15), windowRelWidth(0.15), windowRelWidth(0.15), windowRelHeight(0.45), windowRelWidth(0.7), windowRelHeight(0.15), "Ce menu donne des infos sur l'appli et le nombre de questions disponibles.", 1],
+    [windowRelWidth(0.475), windowRelHeight(0.6175), windowRelWidth(0.15), windowRelWidth(0.15), windowRelWidth(0.15), windowRelHeight(0.45), windowRelWidth(0.7), windowRelHeight(0.15), "Le menu 'Options' permet de changer le thème ainsi que la taille de la police d'écriture.", 1],
+    [windowRelWidth(0.3), windowRelHeight(0.915), windowRelWidth(0.4), windowRelWidth(0.15), windowRelWidth(0.15), windowRelHeight(0.625), windowRelWidth(0.7), windowRelHeight(0.15), "Naviguez les menus à l'aide des boutons ci-dessous ou en balayant l'écran.", 1],
+    [windowRelWidth(0.1), windowRelHeight(0.22), windowRelWidth(0.8), windowRelHeight(0.25), windowRelWidth(0.075), windowRelHeight(0.5), windowRelWidth(0.85), windowRelHeight(0.25), "Prenez un quiz thématique en choisissant les matières et chapitres que vous souhaitez réviser... \n\nAstuce: Un swipe vers la droite sur le nom d'une matière permet de selectionner tous ses chapitres !", 0],
+    [windowRelWidth(0.1), windowRelHeight(0.6), windowRelWidth(0.8), windowRelHeight(0.2), windowRelWidth(0.2), windowRelHeight(0.49), windowRelWidth(0.6), windowRelHeight(0.1), "... ou révisez toutes les matières à la fois.", 0],
+    [0.0, 0.0, 0.0 , 0.0, windowRelWidth(0.1), windowRelHeight(0.49), windowRelWidth(0.8), windowRelHeight(0.1), "Profitez de fiches sur chaque matière !", 2],
+    [0.0, 0.0, 0.0 , 0.0, windowRelWidth(0.1), windowRelHeight(0.39), windowRelWidth(0.8), windowRelHeight(0.15), "Vous êtes maintenant fin prêt pour utiliser l'application !\n\nBonnes révisions !", 1],
+
+  ];
+
+}
+
+
